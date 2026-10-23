@@ -1,37 +1,36 @@
-# Modul 3: Front-End Foundational Checkpoint 1
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Repositori ini berisi kumpulan latihan dasar front-end (*Checkpoint 1*) yang mencakup struktur web semantik, manipulasi DOM dengan JavaScript murni, hingga penerapan TypeScript dan Tailwind CSS.
+## Getting Started
 
-## 📁 Struktur Folder Proyek
+First, run the development server:
 
-Proyek ini diorganisasikan ke dalam beberapa modul latihan dasar:
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-* **`html-css/`**
-  * Berisi halaman profil HTML5 semantik (`header`, `main`, `section`, `footer`).
-  * Dilengkapi dengan formulir kontak (formulir interaktif dengan label & input) serta penerapan tata letak menggunakan CSS Flexbox/Grid dan *media queries* untuk responsivitas seluler.
-* **`javascript/`**
-  * Berisi latihan manipulasi DOM murni (*DOM manipulation*).
-  * Mencakup *event handling* (klik, *submit*, pencegahan aksi bawaan formulir), serta implementasi metode pemrosesan *array* JavaScript (`forEach`, `map`, `filter`, `reduce`).
-* **`typescript-tailwind/`**
-  * Berisi latihan penerapan TypeScript (`tsconfig.json`, *interfaces*, tipe data union, dan alias tipe).
-  * Mengintegrasikan Tailwind CSS untuk membangun katalog produk interaktif.
-  * Fitur utama: Pencarian langsung (*live search*), pemfilteran produk, dan penghitungan tombol tambah ke keranjang secara dinamis.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## 🛠️ Cara Menjalankan Proyek
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-Setiap folder latihan dapat dijalankan secara mandiri di komputer lokal Anda:
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-1. **Untuk Modul HTML/CSS dan JavaScript Murni:**
-   * Buka file `index.html` yang berada di dalam folder masing-masing langsung menggunakan *browser* web pilihan Anda.
+## Learn More
 
-2. **Untuk Modul TypeScript & Tailwind CSS:**
-   * Buka terminal di dalam folder `typescript-tailwind/`.
-   * Jalankan instalasi dependensi jika diperlukan:
-     ```bash
-     npm install
-     ```
-   * Kompilasi file TypeScript menggunakan:
-     ```bash
-     npx tsc
-     ```
-   * Buka file `index.html` pada folder tersebut melalui *browser* untuk melihat hasil halaman katalog produk yang interaktif.
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
