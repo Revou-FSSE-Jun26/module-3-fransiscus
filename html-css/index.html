@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Saya - RevoShop</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>Profil Mahasiswa RevoU</h1>
+        <p>Full-Stack Software Engineering</p>
+    </header>
+
+    <main class="main-layout">
+        <section class="profile-card">
+            <h2>Tentang Saya</h2>
+            <p>Halo, saya sedang mempelajari fondasi front-end web development mencakup HTML semantik, CSS Grid, Vanilla JavaScript DOM, dan TypeScript.</p>
+            <div class="skills-container">
+                <span class="badge">HTML5</span>
+                <span class="badge">CSS3 Grid & Flexbox</span>
+                <span class="badge">JavaScript</span>
+                <span class="badge">TypeScript</span>
+            </div>
+        </section>
+
+        <section class="contact-section">
+            <h2>Hubungi Saya</h2>
+            <form class="contact-form" id="contactForm">
+                <div class="form-group">
+                    <label for="fullName">Nama Lengkap</label>
+                    <input type="text" id="fullName" name="fullName" placeholder="Masukkan nama Anda" required>
+                </div>
+                <div class="form-group">
+                    <label for="userEmail">Alamat Email</label>
+                    <input type="email" id="userEmail" name="userEmail" placeholder="nama@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="userMessage">Pesan</label>
+                    <textarea id="userMessage" name="userMessage" rows="4" placeholder="Tuliskan pesan Anda..." required></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Kirim Pesan</button>
+            </form>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 Modul Pemrograman Front-End RevoShop. Hak cipta dilindungi undang-undang.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan DOM & Array JavaScript</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
+        .card { border: 1px solid #ccc; padding: 1.25rem; border-radius: 8px; margin-bottom: 1.5rem; }
+        .highlight { background-color: #fef08a; padding: 0.5rem; border-radius: 4px; }
+        .todo-item { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid #eee; }
+        button { cursor: pointer; padding: 0.4rem 0.8rem; border-radius: 4px; border: 1px solid #999; }
+        input { padding: 0.4rem; margin-right: 0.5rem; }
+    </style>
+</head>
+<body>
+    <h1>Latihan DOM & Array JavaScript</h1>
+
+    <!-- Bagian 1: Manipulasi Elemen DOM & Event Handling -->
+    <div class="card">
+        <h2>1. Manipulasi DOM & Event Handling</h2>
+        <p id="targetText">Teks ini akan diperbarui dan diberi efek aktif/nonaktif.</p>
+        <button id="toggleBtn">Ubah Teks & Toggle Kelas</button>
+
+        <h3 style="margin-top: 1rem;">Daftar Tugas (Buat & Hapus Elemen):</h3>
+        <form id="todoForm" style="margin-top: 0.5rem;">
+            <input type="text" id="todoInput" placeholder="Tugas baru..." required>
+            <button type="submit">Tambah</button>
+        </form>
+        <ul id="todoList" style="margin-top: 0.75rem; list-style: none; padding: 0;"></ul>
+    </div>
+
+    <!-- Bagian 2: Pengolahan Array (forEach, map, filter, reduce) -->
+    <div class="card">
+        <h2>2. Latihan Pemrosesan Array</h2>
+        <div id="arrayOutput"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
