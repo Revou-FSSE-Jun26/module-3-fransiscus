@@ -36,6 +36,6 @@ Aplikasi web e-commerce *full-stack* modern yang dibangun menggunakan **Next.js 
 Pastikan variabel lingkungan berikut terpasang pada platform *deployment* frontend (Vercel):
 
 ```env
-NEXT_PUBLIC_API_BASE_URL=
+NEXT_PUBLIC_API_BASE_URL=https://fransiscus13.pythonanywhere.com
 
 
