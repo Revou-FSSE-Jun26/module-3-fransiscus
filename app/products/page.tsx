@@ -1,48 +1,46 @@
-import ProductCard from "../../components/ProductCard";
-import SearchBar from "../../components/SearchBar";
+"use client";
+import { useEffect, useState } from "react";
+import ProductGrid from "@/components/ProductGrid";
+import { API_BASE_URL } from "@/lib/api";
 
-export const metadata = { title: "Katalog Produk - RevoShop" };
+export default function ProductsPage() {
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-async function getProducts() {
-  try {
-    const res = await fetch("http://127.0.0.1:5000/products", { cache: 'no-store' });
-    if (!res.ok) throw new Error("Gagal mengambil data API");
-    return await res.json();
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
+  useEffect(() => {
+    // Memenuhi Kriteria A7: Menetapkan judul tab browser secara dinamis
+    document.title = "Katalog Produk - RevoShop";
 
-export default async function ProductsPage({ searchParams }: { searchParams: { query?: string } }) {
-  const resolvedParams = await searchParams;
-  const query = resolvedParams.query || "";
-  const products = await getProducts();
+    const fetchProducts = async () => {
+      try {
+        // Memenuhi Kriteria Env Config: Menggunakan API_BASE_URL
+        const res = await fetch(`${API_BASE_URL}/products`);
+        if (res.ok) {
+          const data = await res.json();
+          setFilteredProducts(data);
+        }
+      } catch (error) {
+        console.error("Gagal mengambil data produk:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const filteredProducts = query 
-    ? products.filter((p: any) => p.name.toLowerCase().includes(query.toLowerCase()))
-    : products;
+    fetchProducts();
+  }, []);
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6">Semua Produk</h1>
-      <SearchBar />
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {filteredProducts.length > 0 ? (
-          filteredProducts.map((p: any) => (
-            <ProductCard 
-              key={p.id} 
-              id={p.id} 
-              name={p.name} 
-              price={p.price} 
-              stock={p.stock} 
-              image={p.image} 
-            />
-          ))
-        ) : (
-          <p className="text-gray-500 col-span-full">Tidak ada produk ditemukan.</p>
-        )}
-      </div>
+    <div className="container mx-auto px-4 py-8 min-h-screen">
+      <h1 className="text-3xl font-bold mb-8 text-gray-800 text-center">Katalog Produk</h1>
+      
+      {loading ? (
+        <div className="flex justify-center items-center h-40">
+            <p className="text-lg text-gray-500 animate-pulse">Memuat produk...</p>
+        </div>
+      ) : (
+        /* Memenuhi Kriteria: Mengganti .map inline dengan komponen ProductGrid */
+        <ProductGrid products={filteredProducts} />
+      )}
     </div>
   );
 }

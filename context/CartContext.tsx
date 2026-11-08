@@ -1,95 +1,64 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import toast from 'react-hot-toast';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import toast from "react-hot-toast";
 
-interface CartItem {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-  quantity: number;
-}
+const CartContext = createContext<any>(null);
 
-interface CartContextType {
-  cart: CartItem[];
-  addToCart: (product: any) => void;
-  removeFromCart: (id: number) => void;
-  updateQuantity: (id: number, quantity: number) => void;
-  clearCart: () => void;
-  totalPrice: number;
-}
+export const CartProvider = ({ children }: { children: React.ReactNode }) => {
+  const [cart, setCart] = useState<any[]>([]);
 
-export const CartContext = createContext<CartContextType>({
-  cart: [],
-  addToCart: () => {},
-  removeFromCart: () => {},
-  updateQuantity: () => {},
-  clearCart: () => {},
-  totalPrice: 0,
-});
-
-export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>([]);
-
+  // Memuat keranjang dari localStorage saat pertama kali dimuat
   useEffect(() => {
-    const savedCart = localStorage.getItem('revoshop_cart');
+    const savedCart = localStorage.getItem("revoshop_cart");
     if (savedCart) {
       try {
         setCart(JSON.parse(savedCart));
       } catch (e) {
-        localStorage.removeItem('revoshop_cart');
+        console.error("Gagal memparsing keranjang:", e);
       }
     }
   }, []);
 
+  // Menyimpan keranjang ke localStorage setiap kali ada perubahan
   useEffect(() => {
-    localStorage.setItem('revoshop_cart', JSON.stringify(cart));
+    localStorage.setItem("revoshop_cart", JSON.stringify(cart));
   }, [cart]);
 
-  const addToCart = (product: any) => {
-    setCart((prevCart) => {
-      const existing = prevCart.find((item) => item.id === product.id);
-      if (existing) {
-        toast.success(`Jumlah ${product.name} diperbarui di keranjang!`);
-        return prevCart.map((item) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-        );
+  const addToCart = (product: any, quantity: number = 1) => {
+    setCart((prevCart: any[]) => {
+      const existingIndex = prevCart.findIndex((item) => item.id === product.id);
+      if (existingIndex > -1) {
+        const updated = [...prevCart];
+        updated[existingIndex].quantity += quantity;
+        return updated;
       }
-      toast.success(`${product.name} ditambahkan ke keranjang!`);
-      return [...prevCart, { id: product.id, name: product.name, price: product.price, image: product.image, quantity: 1 }];
+      return [...prevCart, { 
+        id: product.id, 
+        name: product.name, 
+        price: product.price, 
+        image: product.image, 
+        quantity 
+      }];
     });
+
+    // Toast ditaruh di luar setCart agar aman dari error rendering React
+    toast.success(`${product.name} ditambahkan ke keranjang!`);
   };
 
   const removeFromCart = (id: number) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
-    toast.success('Item dihapus dari keranjang.');
-  };
-
-  const updateQuantity = (id: number, quantity: number) => {
-    if (quantity <= 0) {
-      removeFromCart(id);
-      return;
-    }
-    setCart((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, quantity } : item))
-    );
+    setCart((prevCart: any[]) => prevCart.filter(item => item.id !== id));
+    toast.success("Produk dihapus dari keranjang");
   };
 
   const clearCart = () => {
     setCart([]);
-    localStorage.removeItem('revoshop_cart');
   };
 
-  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, clearCart, totalPrice }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart }}>
       {children}
     </CartContext.Provider>
   );
-}
+};
 
-// PASTIKAN BARIS INI ADA DI BAGIAN BAWAH FILE:
-export function useCart() {
-  return useContext(CartContext);
-}
+export const useCart = () => useContext(CartContext);

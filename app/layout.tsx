@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import { AuthProvider } from "../context/AuthContext";
 import { CartProvider } from "../context/CartContext";
 import { Toaster } from "react-hot-toast";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "RevoShop - Full-Stack E-Commerce",
@@ -22,7 +23,9 @@ export default function RootLayout({
         <AuthProvider>
           <CartProvider>
             <Toaster position="top-right" />
+          <Suspense fallback={<div className="h-16 bg-gray-900 border-b border-gray-800"></div>}>
             <Header />
+          </Suspense>
             <main className="flex-grow container mx-auto px-4 py-8">
               {children}
             </main>

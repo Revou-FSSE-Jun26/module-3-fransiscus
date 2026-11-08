@@ -1,24 +1,18 @@
 "use client";
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
-export default function ProtectedRoute({ children, allowedRole }: { children: React.ReactNode, allowedRole?: string }) {
+export default function ProtectedRoute({ children, allowedRole }: { children: React.ReactNode; allowedRole?: "admin" | "pelanggan" }) {
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    const userStr = localStorage.getItem('user');
-    if (!userStr) {
-      router.push('/login');
-      return;
-    }
+    if (loading) return;
+    if (!user) router.replace("/login");
+    else if (allowedRole && user.role !== allowedRole) router.replace("/");
+  }, [user, loading, allowedRole, router]);
 
-    if (allowedRole) {
-      const user = JSON.parse(userStr);
-      if (user.role !== allowedRole) {
-        router.push('/');
-      }
-    }
-  }, [router, allowedRole]);
-
+  if (loading || !user || (allowedRole && user.role !== allowedRole)) return null;
   return <>{children}</>;
 }

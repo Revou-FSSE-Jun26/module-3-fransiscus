@@ -1,65 +1,67 @@
 "use client";
-import Link from 'next/link';
-import { useAuth } from '../context/AuthContext';
-import { useCart } from '../context/CartContext';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { useEffect, useState } from "react";
 
 export default function Header() {
-  const { user, logoutUser } = useAuth();
-  const { cart } = useCart();
+  const pathname = usePathname();
+  const { user, logout, userRole } = useAuth() as any; 
+  const [mounted, setMounted] = useState(false);
 
-  const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+  // Memastikan komponen hanya merender bagian user setelah terpasang di browser (mencegah Hydration Error)
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isActive = (path: string) => 
+    pathname === path ? "text-blue-400 font-bold border-b-2 border-blue-400 pb-1" : "text-gray-300 hover:text-white transition-colors";
+
+  const role = user?.role || userRole;
+  const userName = user?.name || user?.email || "Admin";
 
   return (
-    <header className="bg-blue-600 text-white shadow-md">
-      <div className="container mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-4">
-        <Link href="/" className="text-2xl font-extrabold tracking-wide">
-          RevoShop
-        </Link>
-
-        <nav className="flex items-center gap-6 font-medium">
-          <Link href="/" className="hover:text-gray-200">Produk</Link>
-          <Link href="/categories" className="hover:text-gray-200">Kategori</Link>
-          <Link href="/orders" className="hover:text-gray-200">Pesanan</Link>
-
-          <Link href="/cart" className="relative hover:text-gray-200 flex items-center gap-1">
-            <span>🛒 Keranjang</span>
-            {totalItems > 0 && (
-              <span className="bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-0.5 rounded-full">
-                {totalItems}
-              </span>
-            )}
-          </Link>
-
-          {user?.role === 'admin' && (
-            <Link href="/dashboard" className="bg-yellow-500 text-gray-900 px-3 py-1 rounded font-bold hover:bg-yellow-400">
-              Dasbor Admin
-            </Link>
+    <header className="bg-gray-900 p-4 sticky top-0 z-50 shadow-md">
+      <nav className="container mx-auto flex flex-wrap justify-between items-center gap-4">
+        <Link href="/" className="text-2xl font-bold text-white tracking-wide">RevoShop</Link>
+        
+        <div className="flex gap-6 items-center font-medium">
+          <Link href="/products" className={isActive("/products")}>Katalog</Link>
+          <Link href="/categories" className={isActive("/categories")}>Kategori</Link>
+          <Link href="/cart" className={isActive("/cart")}>Keranjang</Link>
+          
+          {/* Bagian dinamis yang dilindungi status mounted */}
+          {mounted && (
+            <>
+              {user ? (
+                <>
+                  {role === "admin" && (
+                    <Link href="/dashboard" className={isActive("/dashboard")}>Dashboard</Link>
+                  )}
+                  <Link href="/orders" className={isActive("/orders")}>Pesanan</Link>
+                  <div className="flex items-center gap-3 ml-4 pl-4 border-l border-gray-700">
+                    <span className="text-sm text-gray-400">Halo, {userName}</span>
+                    <button onClick={() => {
+                      if (typeof logout === 'function') logout();
+                      else {
+                        localStorage.removeItem("revoshop_token");
+                        window.location.href = "/login";
+                      }
+                    }} className="bg-red-600 hover:bg-red-700 px-4 py-1.5 rounded-md text-white text-sm font-bold transition-colors">
+                      Keluar
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="flex items-center gap-3 ml-4 pl-4 border-l border-gray-700">
+                  <Link href="/login" className={isActive("/login")}>Masuk</Link>
+                  <Link href="/register" className={`px-4 py-1.5 rounded-md text-white text-sm font-bold transition-colors ${pathname === '/register' ? 'bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'}`}>Daftar</Link>
+                </div>
+              )}
+            </>
           )}
-
-          {user ? (
-            <div className="flex items-center gap-3 border-l border-blue-400 pl-4">
-              <span data-testid="header-username" className="font-bold text-sm bg-blue-700 px-3 py-1 rounded">
-                👤 {user.username} ({user.role})
-              </span>
-              <button
-                onClick={logoutUser}
-                className="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded font-bold transition-colors"
-              >
-                Keluar
-              </button>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2 border-l border-blue-400 pl-4">
-              <Link href="/login" className="bg-white text-blue-600 px-3 py-1 rounded font-bold hover:bg-gray-100 text-sm">
-                Masuk
-              </Link>
-              <Link href="/register" className="bg-blue-800 text-white px-3 py-1 rounded font-bold hover:bg-blue-900 text-sm">
-                Daftar
-              </Link>
-            </div>
-          )}
-        </nav>
-      </div>
+        </div>
+      </nav>
     </header>
   );
 }

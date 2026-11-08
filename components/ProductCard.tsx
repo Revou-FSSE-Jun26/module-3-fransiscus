@@ -1,45 +1,52 @@
 "use client";
-import { useAuth } from '@/hooks/useAuth';
-import { useRouter } from 'next/navigation';
-import { useCart } from '@/hooks/useCart';
-import toast from 'react-hot-toast';
+import { useState } from "react";
+import Link from "next/link";
+import { useCart } from "@/context/CartContext"; 
 
-export default function ProductCard({ id, name, price, stock, image }: any) {
-  const { user } = useAuth() as any;
-  const { addToCart } = useCart() as any;
-  const router = useRouter();
+export interface ProductCardProps {
+    id: number;
+    name: string;
+    price: number;
+    stock: number;
+    image: string;
+}
 
-  const handleAddToCart = () => {
-    // Membungkus kembali data menjadi satu objek untuk dimasukkan ke keranjang
-    const productItem = { id, name, price, stock, image };
-    addToCart(productItem);
-    toast.success(`${name} ditambahkan ke keranjang!`);
-  };
+export default function ProductCard(product: ProductCardProps) {
+    const { id, name, price, stock, image } = product;
+    const [quantity, setQuantity] = useState(1);
+    
+    // Tambahkan 'as any' di sini untuk mengatasi error TypeScript Expected 1 arguments
+    const { addToCart } = useCart() as any; 
+    
+    const isOutOfStock = stock <= 0;
 
-  return (
-    <div className="bg-gray-900 border border-gray-800 p-4 rounded-lg shadow-xl flex flex-col justify-between">
-      <div>
-        <img src={image} alt={name} className="w-full h-48 object-cover rounded-md mb-4" />
-        <h3 className="text-lg font-bold text-white mb-1">{name}</h3>
-        <p className="text-yellow-400 font-semibold mb-4">Rp {price?.toLocaleString()}</p>
-      </div>
+    const handleAdd = () => { if (quantity < stock) setQuantity(q => q + 1); };
+    const handleSub = () => { if (quantity > 1) setQuantity(q => q - 1); };
 
-      {/* Logika Tombol Dinamis Sesuai Rubrik */}
-      {!user ? (
-        <button
-          onClick={() => router.push('/login')}
-          className="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 rounded transition-colors"
-        >
-          Masuk untuk membeli
-        </button>
-      ) : (
-        <button
-          onClick={handleAddToCart}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded transition-colors"
-        >
-          Tambah ke Keranjang
-        </button>
-      )}
-    </div>
-  );
+    return (
+        <div className={`rounded-lg border p-4 transition-colors ${isOutOfStock ? 'bg-gray-100 opacity-60' : 'bg-white hover:shadow-lg'}`}>
+            <Link href={`/products/${id}`}>
+                <img src={image || '/placeholder.jpg'} alt={name} className="h-48 w-full object-cover rounded" />
+                <h3 className="mt-2 font-bold text-lg text-gray-800">{name}</h3>
+                <p className="text-blue-600 font-semibold">Rp {price.toLocaleString()}</p>
+                <p className="text-sm text-gray-500">Sisa Stok: {stock}</p>
+            </Link>
+
+            {isOutOfStock ? (
+                <button disabled className="mt-4 w-full rounded bg-red-500 py-2 text-white font-bold cursor-not-allowed">Habis Terjual</button>
+            ) : (
+                <div className="mt-4 flex flex-col gap-2">
+                    <div className="flex items-center justify-between border rounded border-gray-300">
+                        <button onClick={handleSub} className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-black">-</button>
+                        <span className="text-black font-medium">{quantity}</span>
+                        <button onClick={handleAdd} className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-black">+</button>
+                    </div>
+                    {/* Rubrik meminta addToCart(product, quantity) */}
+                    <button onClick={() => addToCart(product, quantity)} className="w-full rounded bg-blue-600 py-2 text-white font-bold hover:bg-blue-700">
+                        Tambah ke Keranjang
+                    </button>
+                </div>
+            )}
+        </div>
+    );
 }

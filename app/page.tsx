@@ -1,52 +1,41 @@
-import ProductCard from "../components/ProductCard";
+import ProductGrid from "../components/ProductGrid";
 import SearchBar from "../components/SearchBar";
-import AddProductForm from "../components/AddProductForm";
+import { API_BASE_URL } from "../lib/api"; 
 
-async function getProducts() {
-  try {
-    // Menggunakan URL statis 127.0.0.1 agar koneksi Next.js ke Flask lebih stabil
-    const res = await fetch("http://127.0.0.1:5000/products", { cache: 'no-store' });
-    if (!res.ok) throw new Error("Gagal mengambil data API");
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    return [];
+export default async function HomePage({ 
+  searchParams 
+}: { 
+  searchParams: Promise<{ query?: string }> 
+}) {
+  const resolvedParams = await searchParams;
+  const query = resolvedParams?.query || "";
+  
+  let url = `${API_BASE_URL}/products`;
+  if (query) {
+    url += `?search=${encodeURIComponent(query)}`;
   }
-}
 
-export default async function Home() {
-  const products = await getProducts();
-  // Menampilkan maksimal 5 produk di halaman depan
-  const displayProducts = products.slice(0, 5);
+  let products = [];
+  try {
+    const res = await fetch(url, { cache: "no-store" });
+    if (res.ok) {
+      products = await res.json();
+    }
+  } catch (error) {
+    console.error("Gagal mengambil data produk:", error);
+  }
 
   return (
-    <div>
-      <div className="flex justify-between items-end mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">Katalog Produk</h1>
+    <div className="container mx-auto p-6 min-h-screen">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <h1 className="text-3xl font-extrabold text-white">Selamat Datang di RevoShop</h1>
+        <div className="w-full md:w-1/3">
+          <SearchBar />
+        </div>
       </div>
 
-      <SearchBar />
-
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-        {displayProducts.length > 0 ? (
-          displayProducts.map((p: any) => (
-            <ProductCard
-              key={p.id}
-              id={p.id}
-              name={p.name}
-              price={p.price}
-              stock={p.stock}
-              image={p.image}
-            />
-          ))
-        ) : (
-          <p className="text-gray-500 col-span-full">Belum ada produk di database.</p>
-        )}
-      </div>
-
-      <hr className="my-10" />
-      <AddProductForm />
+      {/* Menggunakan ProductGrid agar sesuai kriteria komponen */}
+      <ProductGrid products={products} />
     </div>
   );
- } 
+}
